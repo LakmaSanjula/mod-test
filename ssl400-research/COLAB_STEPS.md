@@ -13,12 +13,17 @@ Inside the repo, training code is in `ssl400-research/`.
 
 ## Before Colab
 
-1. Push latest `ssl400-research` to GitHub from your PC  
+1. **Push** latest `ssl400-research` to GitHub from your PC (repo must not be empty)  
 2. Keep only the CSV dataset on Drive under `MyDrive/SSL400/Dataset - MP - CSV`  
 3. Colab: **Runtime → GPU (T4)**  
 4. Open `ssl400-research/colab_train_stgcn.ipynb` (from GitHub or upload once)  
-5. Run all cells
+5. Run all cells — start from cell 1 after any clone error (**Runtime → Restart session** if you see `getcwd` errors)
 
+### If clone fails with `getcwd` / missing `ssl400-research`
+
+- Restart the Colab runtime, then re-run from cell 1  
+- The clone cell now does `os.chdir("/content")` before `git clone`  
+- If the error says `ssl400-research not found`, the GitHub repo is empty or outdated — push from PC first
 ## What the notebook does
 
 1. Mount Drive (dataset + saved runs)  
