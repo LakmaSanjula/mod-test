@@ -1,0 +1,14 @@
+raw_csv_root: "/content/drive/MyDrive/SSL400/Dataset - MP - CSV"
+processed_dir: "data/processed"
+inspected_dir: "data/inspected"
+min_samples_per_class: 10
+sequence_length: 64
+use_z: true
+visibility_threshold: 0.5
+mask_low_visibility: true
+mask_lower_body: false
+train_ratio: 0.70
+val_ratio: 0.15
+test_ratio: 0.15
+split_seed: 42
+save_npz: true

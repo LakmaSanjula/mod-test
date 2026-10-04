@@ -1,0 +1,46 @@
+# Optional imbalance-safe run — keeps the same ST-GCN and accuracy baseline settings,
+# then adds ONLY mild rare-class-targeted aug + tiny label smoothing.
+#
+# Safe choices (do NOT enable these here — they hurt overall % / graph reliability):
+#   weighted_sampler, class_weights, strong focal gamma, mirroring, joint dropout
+#
+# Graph reliability rules used by the trainer:
+#   - no augmentation on val/test
+#   - best checkpoint by raw validation macro-F1 (not smoothed)
+#   - curves plot raw epoch metrics + mark best epoch
+model:
+  in_channels: 3
+  num_joints: 33
+  num_classes: null
+  channels: [64, 64, 128, 256]
+  temporal_kernel: 9
+  dropout: 0.5
+  graph_strategy: spatial
+
+train:
+  epochs: 100
+  batch_size: 32
+  learning_rate: 0.001
+  weight_decay: 0.0001
+  optimizer: adam
+  scheduler: cosine
+  step_size: 30
+  gamma: 0.1
+  early_stopping_patience: 20
+  num_workers: 0
+  amp: true
+  class_weights: false
+  weighted_sampler: false
+  label_smoothing: 0.05
+  focal_gamma: 1.0
+  augment: true
+  rare_class_augment: true
+  rare_class_max_count: 12
+  seed: 42
+  device: auto
+
+paths:
+  checkpoint_dir: "checkpoints"
+  results_dir: "results"
+  plots_dir: "results/plots"
+  experiment_name: "stgcn_imbalance_safe_seed42"
