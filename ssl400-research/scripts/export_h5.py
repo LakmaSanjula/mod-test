@@ -43,8 +43,14 @@ def export_checkpoint_to_h5(checkpoint_path: Path, output_path: Path) -> Path:
     with h5py.File(output_path, "w") as f:
         weights = f.create_group("model_weights")
         for name, tensor in state.items():
-            arr = tensor.detach().cpu().numpy()
-            weights.create_dataset(name, data=arr, compression="gzip")
+            arr = np.asarray(tensor.detach().cpu().numpy())
+            # h5py paths cannot contain '/'; flatten module separators.
+            dset_name = name.replace("/", ".")
+            # Scalar (0-d) arrays cannot use chunk/compression options.
+            if arr.ndim == 0:
+                weights.create_dataset(dset_name, data=arr)
+            else:
+                weights.create_dataset(dset_name, data=arr, compression="gzip")
 
         meta = f.create_group("metadata")
         meta.attrs["framework"] = "pytorch"
@@ -68,8 +74,8 @@ def export_checkpoint_to_h5(checkpoint_path: Path, output_path: Path) -> Path:
             class_to_idx = json.loads(Path(class_map_path).read_text(encoding="utf-8"))
             meta.attrs["class_to_idx_json"] = json.dumps(class_to_idx)
 
-        # Convenience: flat list of parameter names
-        names = np.array(list(state.keys()), dtype=object)
+        # Convenience: flat list of parameter names (same names written above)
+        names = np.array([k.replace("/", ".") for k in state.keys()], dtype=object)
         dt = h5py.string_dtype(encoding="utf-8")
         weights.create_dataset("param_names", data=names.astype(object), dtype=dt)
 
